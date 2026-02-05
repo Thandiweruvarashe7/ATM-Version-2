@@ -4,12 +4,11 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class User {
-    private String account; // Encapsulation
+    private String account;
     private String pin;
     private double balance;
     private List<String> history;
 
-    // Constructor overloading (Polymorphism)
     public User(String account, String pin, double balance) {
         this.account = account;
         this.pin = pin;
@@ -24,15 +23,13 @@ public class User {
         this.history = history != null ? history : new ArrayList<>();
     }
 
-    // Encapsulation: getters
     public String getAccount() { return account; }
     public String getPin() { return pin; }
     public double getBalance() { return balance; }
 
-    // Business logic encapsulated
     public void withdraw(double amount) {
-        balance -= amount; // Logic
-        history.add("Withdrew €" + amount); // Encapsulation: update history internally
+        balance -= amount;
+        history.add("Withdrew €" + amount);
     }
 
     public void deposit(double amount) {
@@ -40,16 +37,18 @@ public class User {
         history.add("Deposited €" + amount);
     }
 
+    // Logic for the Sender
     public void transfer(double amount, String toAccount) {
         balance -= amount;
         history.add("Transferred €" + amount + " to " + toAccount);
     }
 
+    // Logic for the Receiver
     public void receive(double amount, String fromAccount) {
         balance += amount;
         history.add("Received €" + amount + " from " + fromAccount);
     }
 
-    public List<String> getHistory() { return history; } // Encapsulation
+    public List<String> getHistory() { return history; }
 }
 

@@ -7,8 +7,8 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        // OOP: Object creation (Encapsulation & Composition)
-        JsonStorage storage = new JsonStorage(); // DIP: depend on abstraction via interfaces,memory bank of atm state
+        // OOP: Object creation (Encapsulation )
+        JsonStorage storage = new JsonStorage(); // DIP:  depend on abstraction via interfaces,memory bank of atm state
         ATMService atmService = new ATMServiceImpl(storage); // Polymorphism: ATMService interface,withdrawals , deposit and transfer etc
         TechnicianService technicianService = new TechnicianService(storage); //access atm cash, paper etc
         Scanner sc = new Scanner(System.in); //read inputs

@@ -1,19 +1,13 @@
 package model;
 
-import java.util.LinkedHashMap;//store key value pairs
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-//store note combinations
-public class ATMState {
+import java.util.*;
 
-    // Encapsulation: private fields for ATM notes, paper, ink, firmware
-    private int c100, c50, c20, c10, c5; // Note denominations
+public class ATMState {
+    private int c100, c50, c20, c10, c5;
     private int paper;
     private int ink;
     private String firmware;
 
-    // Constructor overloading (Polymorphism)
     public ATMState(int c100, int c50, int c20, int c10, int c5, int paper, int ink, String firmware) {
         this.c100 = c100;
         this.c50 = c50;
@@ -23,9 +17,8 @@ public class ATMState {
         this.paper = paper;
         this.ink = ink;
         this.firmware = firmware;
-    }//shows initial state of the ATMState
+    }
 
-    // Backwards-compatible constructor
     public ATMState(double cash, int paper, String firmware) {
         int remaining = (int) cash;
         this.c100 = remaining / 100; remaining %= 100;
@@ -34,16 +27,14 @@ public class ATMState {
         this.c10 = remaining / 10; remaining %= 10;
         this.c5 = remaining / 5;   remaining %= 5;
         this.paper = paper;
-        this.ink = 100;
+        this.ink = 2;
         this.firmware = firmware;
-    }//total cash caculations and notes
+    }
 
-    // Method: get total cash amount  (Encapsulation)
     public double getCashAmount() {
         return (c100 * 100) + (c50 * 50) + (c20 * 20) + (c10 * 10) + (c5 * 5);
     }
 
-    // Get note count by denomination
     public int getCountFor(int denom) {
         return switch (denom) {
             case 100 -> c100;
@@ -55,7 +46,6 @@ public class ATMState {
         };
     }
 
-    // Add or remove notes (Encapsulation)
     public void addNotes(int denom, int count) {
         switch (denom) {
             case 100 -> c100 += count;
@@ -66,34 +56,29 @@ public class ATMState {
         }
     }
 
-    // Remove notes if available (Encapsulation + Logic)
     public boolean removeRequestedNotes(Map<Integer, Integer> requested) {
         for (Map.Entry<Integer, Integer> e : requested.entrySet()) {
-            if (getCountFor(e.getKey()) < e.getValue()) return false; // Logic: insufficient notes
+            if (getCountFor(e.getKey()) < e.getValue()) return false;
         }
         for (Map.Entry<Integer, Integer> e : requested.entrySet()) {
-            addNotes(e.getKey(), -e.getValue()); // Update notes
+            addNotes(e.getKey(), -e.getValue());
         }
         return true;
-    }//withdrawal cash is enough
+    }
 
-    // Simulate allocation of notes (Logic + Loops)
     public Map<Integer, Integer> simulateAllocationForAmount(int amount) {
         int remaining = amount;
         Map<Integer, Integer> result = new LinkedHashMap<>();
         int[] denoms = {100, 50, 20, 10, 5};
 
-        for (int d : denoms) { // Loop over denominations
+        for (int d : denoms) {
             int count = Math.min(remaining / d, getCountFor(d));
             result.put(d, count);
             remaining -= count * d;
         }
-
-        if (remaining != 0) return null; // Logic: cannot allocate
-        return result;
+        return (remaining == 0) ? result : null;
     }
 
-    // Generate multiple allocation options (Loops + Recursion)
     public List<Map<Integer, Integer>> findAllocationsForAmount(int amount, int limit) {
         List<Map<Integer, Integer>> results = new ArrayList<>();
         int[] denoms = new int[]{100, 50, 20, 10, 5};
@@ -101,32 +86,29 @@ public class ATMState {
         return results;
     }
 
-    // Recursive helper (Loop + Logic)
     private void findAllocationsRecursive(int remaining, int idx, int[] denoms, Map<Integer, Integer> current, List<Map<Integer, Integer>> results, int limit) {
         if (results.size() >= limit) return;
         if (remaining == 0) {
-            results.add(new LinkedHashMap<>(current)); // Store allocation
+            results.add(new LinkedHashMap<>(current));
             return;
         }
         if (idx >= denoms.length) return;
 
         int denom = denoms[idx];
         int maxAvailable = Math.min(remaining / denom, getCountFor(denom));
-        for (int cnt = maxAvailable; cnt >= 0; cnt--) { // Loop
+        for (int cnt = maxAvailable; cnt >= 0; cnt--) {
             current.put(denom, cnt);
-            findAllocationsRecursive(remaining - (cnt * denom), idx + 1, denoms, current, results, limit); // Recursion
+            findAllocationsRecursive(remaining - (cnt * denom), idx + 1, denoms, current, results, limit);
             if (results.size() >= limit) return;
         }
     }
 
-    // Allocate notes and remove them (Encapsulation)
     public Map<Integer, Integer> allocateNotesForAmount(int amount) {
         Map<Integer, Integer> allocation = simulateAllocationForAmount(amount);
-        if (allocation != null) removeRequestedNotes(allocation); // Logic
+        if (allocation != null) removeRequestedNotes(allocation);
         return allocation;
     }
 
-    // Getters / Setters (Encapsulation)
     public int getPaperAmount() { return paper; }
     public void setPaperAmount(int paper) { this.paper = paper; }
     public int getInkAmount() { return ink; }
