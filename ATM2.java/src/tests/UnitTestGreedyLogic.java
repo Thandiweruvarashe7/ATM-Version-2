@@ -23,7 +23,7 @@ public class UnitTestGreedyLogic {
         System.out.println("Requested: 180 Euro");
         System.out.println("ATM dispensed: " + allocation);
 
-        // Validation logic
+        // Validation logic,note allocation
         boolean passed = true;
         if (allocation.get(100) != 1) passed = false;
         if (allocation.get(50) != 1) passed = false;

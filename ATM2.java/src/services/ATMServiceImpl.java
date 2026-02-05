@@ -4,14 +4,16 @@ import model.*;
 import interfaces.ATMService;
 import interfaces.ATMRepository;
 import java.util.Map;
-
+//repsitory to access ATMState
 public class ATMServiceImpl implements ATMService {
-    private ATMRepository atmRepo;
+    private ATMRepository atmRepo; // Composition
 
+    // Constructor (DIP: depend on abstraction ATMRepository)
     public ATMServiceImpl(ATMRepository atmRepo) {
         this.atmRepo = atmRepo;
     }
 
+    // Polymorphism: method overloading
     @Override
     public boolean withdraw(User user, int amount) {
         return withdraw(user, atmRepo.loadATM(), amount);
@@ -20,23 +22,23 @@ public class ATMServiceImpl implements ATMService {
     @Override
     public boolean withdraw(User user, ATMState atmState, int amount) {
         Map<Integer, Integer> allocation = atmState.allocateNotesForAmount(amount);
-        if (allocation == null) return false;
-        user.withdraw(amount);
-        atmRepo.saveATM(atmState);
+        if (allocation == null) return false; // Logic
+        user.withdraw(amount); // Encapsulation: user updates balance
+        atmRepo.saveATM(atmState); // Save state
         return true;
     }
 
     @Override
     public boolean withdraw(User user, ATMState atmState, int amount, Map<Integer, Integer> requestedNotes) {
         int sum = requestedNotes.entrySet().stream().mapToInt(e -> e.getKey() * e.getValue()).sum();
-        if (sum != amount || !atmState.removeRequestedNotes(requestedNotes)) return false;
+        if (sum != amount || !atmState.removeRequestedNotes(requestedNotes)) return false; // Logic
         user.withdraw(amount);
         atmRepo.saveATM(atmState);
         return true;
     }
 
     @Override
-    public boolean printReceipt() {
+    public boolean printReceipt() { // Logic: check paper/ink
         ATMState state = atmRepo.loadATM();
         if (state.getPaperAmount() > 0 && state.getInkAmount() > 0) {
             state.setPaperAmount(state.getPaperAmount() - 1);
@@ -49,6 +51,7 @@ public class ATMServiceImpl implements ATMService {
 
     @Override
     public ATMState getATMState() {
-        return atmRepo.loadATM();
+        return atmRepo.loadATM(); // Encapsulation
     }
 }
+

@@ -12,7 +12,7 @@ public class UnitTestUserHistory {
         // Action: Deposit money
         user.deposit(50.0);
 
-        // Assert: Check balance and history list
+        // Assert: Check balance and history list,user class testing
         assert user.getBalance() == 150.0 : "Balance math failed";
         assert user.getHistory().size() == 1 : "History list size should be 1";
         assert user.getHistory().get(0).contains("Deposited €50.0") : "Transaction record is missing or incorrect";

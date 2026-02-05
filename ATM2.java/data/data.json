@@ -1,6 +1,6 @@
 {
   "paper":2,
-  "ink":0,
+  "ink":2,
   "users":[
     {"account":"1002", "pin":"5678", "balance":1030.0},
     {"account":"1001", "pin":"1234", "balance":270.0}

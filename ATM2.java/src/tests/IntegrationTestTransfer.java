@@ -2,7 +2,7 @@ package tests;
 
 import model.User;
 import services.JsonStorage;
-
+//database in memory.user repository and logic
 public class IntegrationTestTransfer {
     public static void main(String[] args) {
         System.out.println("=== Integration Test: Account Transfer ===");
